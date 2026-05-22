@@ -164,6 +164,8 @@ cd Temperatura.Testes && dotnet test -v normal
 cd Temperatura.Testes && dotnet test --collect:"XPlat Code Coverage"
 ```
 
+https://github.com/nataly-cunha-inteli/DotNet5-Moq-xUnit-FluentAssertions
+
 1. Deu o mesmo erro de versionamento do .NET
 
 <img width="935" height="367" alt="image" src="https://github.com/user-attachments/assets/eae5e221-84fe-4e11-a3f5-a0abfe0a806b" />
@@ -318,4 +320,79 @@ Se voce quiser voltar a `net5.0`, sera necessario instalar o runtime corresponde
 - FluentAssertions deixa as validacoes mais legiveis.
 - `dotnet test` e o comando principal para validar o projeto.
 
+<img width="963" height="617" alt="image" src="https://github.com/user-attachments/assets/dfeb665e-fb44-4537-a1c9-5db1917fd211" />
 
+# APIFinancas - Juros Compostos
+
+Este repositório contém uma API ASP.NET Core para cálculo de juros compostos, com testes automatizados em xUnit e SpecFlow.
+
+## O que os testes cobrem
+
+O projeto de especificações em [APIFinancas.Especificacoes](APIFinancas.Especificacoes) valida o comportamento do cálculo de juros compostos com 7 cenários de entrada diferentes.
+
+Os cenários conferem:
+
+- valor do empréstimo
+- número de meses
+- taxa de juros mensal
+- valor final esperado ao término do período
+
+Os testes garantem que a função central de cálculo produza o mesmo valor esperado pelos cenários de negócio, incluindo a formatação de valores monetários com 2 casas decimais.
+
+## Como executar
+
+### 1. Restaurar as dependências
+
+```bash
+dotnet restore
+```
+
+### 2. Executar a suíte de testes
+
+Na raiz do repositório, rode:
+
+```bash
+dotnet test APIFinancas.Especificacoes/APIFinancas.Especificacoes.csproj
+```
+
+Se você já estiver dentro da pasta do projeto de especificações, também pode executar:
+
+```bash
+dotnet test
+```
+
+### 3. Executar a API
+
+Para subir a API localmente:
+
+```bash
+dotnet run --project APIFinancas/APIFinancas.csproj
+```
+
+Depois disso, a rota de cálculo pode ser acessada via endpoint HTTP `GET` em `/CalculoFinanceiro/juroscompostos`.
+
+## Mudança aplicada no cálculo
+
+Antes da correção, a função de cálculo retornava o resultado com a precisão completa do tipo `double`.
+
+Isso fazia com que valores como `12682,417945625455` fossem comparados diretamente com o resultado esperado nos testes, que já estava arredondado para moeda, como `12682,42`.
+
+O ajuste foi feito em [APIFinancas/CalculoFinanceiro.cs](APIFinancas/CalculoFinanceiro.cs) para arredondar o resultado final com `Math.Round(..., 2, MidpointRounding.AwayFromZero)`.
+
+Com isso:
+
+- o retorno da API passou a representar um valor monetário consistente
+- os testes SpecFlow deixaram de falhar por diferença de precisão decimal
+- os cenários passaram a validar exatamente o comportamento esperado pelo domínio
+
+## Resultado da validação
+
+Após a correção, a suíte em [APIFinancas.Especificacoes](APIFinancas.Especificacoes) foi executada com sucesso:
+
+- 7 testes executados
+- 7 aprovados
+- 0 falhas
+
+## Observações
+
+O projeto principal e o projeto de testes estão atualmente em `net9.0`. A limpeza das dependências de autenticação também removeu o aviso de vulnerabilidade que aparecia no pacote `Microsoft.AspNetCore.Authentication.JwtBearer` 5.0.0.
