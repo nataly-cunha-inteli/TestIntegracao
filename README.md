@@ -1,328 +1,123 @@
-https://github.com/nataly-cunha-inteli/DotNet5-xUnit
+# Testes com .NET — DevOps
+
+## Discente: Nataly Cunha | G06
+
+Esta atividade funciona como uma prática guiada de testes unitários, de integração e de esteira, conectando os exemplos do repositório a um aprendizado aplicado de testes para o presente módulo de esteira CI/CD automatizada.
+
+## Evidências de processo
+
+Os testes foram trabalhados em forks criados a partir dos repositórios originais. Primeiramente, vale ressaltar que, no início da execução dos três projetos, houve erros de desatualização da versão do dotnet, sendo necessário trocar, nos arquivos de `csproj`, as menções de versão 5.0 para 9.0.
+
+Abaixo seguem prints do tipo de erro ocorrido e commits de ajuste.
 
 <img width="1035" height="621" alt="image" src="https://github.com/user-attachments/assets/2ec444dc-3823-410e-b103-27c1ae050873" />
 
 <img width="374" height="119" alt="image" src="https://github.com/user-attachments/assets/16675c00-633e-4e1c-bc4e-332970f75840" />
 
+## Teste 1 - Unitário
+
+Este repositório contém uma função simples que converte Fahrenheit para Celsius e testes automáticos que verificam se, de forma individual, a função de conversão está correta; os testes são rápidos de rodar e servem para garantir, de forma simples, que mudanças futuras não quebrem o comportamento esperado, portanto, trata-se de um teste unitário (Pittet, c2026).
+
+https://github.com/nataly-cunha-inteli/DotNet5-xUnit
+
 <img width="830" height="473" alt="image" src="https://github.com/user-attachments/assets/12ef3b19-503a-421c-95ac-bb056fb547e3" />
 
+Este repositório contém dois projetos:
 
-# DotNet5-xUnit
-
-Projeto de exemplo com conversao de temperatura em C# e testes unitarios com xUnit.
-
-## Visao Geral
-
-Este repositorio contem dois projetos:
-
-- [Temperatura/Temperatura.csproj](Temperatura/Temperatura.csproj): biblioteca com a regra de negocio.
-- [Temperatura.Testes/Temperatura.Testes.csproj](Temperatura.Testes/Temperatura.Testes.csproj): projeto de testes unitarios.
+- [Temperatura/Temperatura.csproj](Temperatura/Temperatura.csproj): biblioteca com a regra de negócio.
+- [Temperatura.Testes/Temperatura.Testes.csproj](Temperatura.Testes/Temperatura.Testes.csproj): projeto de testes unitários.
 
 A regra principal converte Fahrenheit para Celsius com arredondamento em 2 casas decimais:
 
 - [Temperatura/ConversorTemperatura.cs](Temperatura/ConversorTemperatura.cs)
 
-Os testes validam varios cenarios de entrada/saida usando [Theory] e [InlineData]:
+Os testes validam vários cenários de entrada/saída usando [Theory] e [InlineData]:
 
 - [Temperatura.Testes/TestesConversorTemperatura.cs](Temperatura.Testes/TestesConversorTemperatura.cs)
 
-## Estrutura
+### Como os testes funcionam
 
-```text
-DotNet5-xUnit/
-  Temperatura/
-    ConversorTemperatura.cs
-    Temperatura.csproj
-  Temperatura.Testes/
-    TestesConversorTemperatura.cs
-    Temperatura.Testes.csproj
-    Temperatura.Testes.sln
-```
-
-## Tecnologias e Dependencias
-
-- .NET 9 (target framework net9.0)
-- xUnit
-- Microsoft.NET.Test.Sdk
-- xunit.runner.visualstudio
-- coverlet.collector
-
-Dependencias de teste configuradas em:
-
-- [Temperatura.Testes/Temperatura.Testes.csproj](Temperatura.Testes/Temperatura.Testes.csproj#L9)
-
-## Como os testes funcionam
-
-1. O metodo FahrenheitParaCelsius recebe um valor em Fahrenheit.
-2. O calculo e feito com a formula:
+1. O método FahrenheitParaCelsius recebe um valor em Fahrenheit.
+2. O cálculo é feito com a fórmula:
 
    C = (F - 32) / 1.8
 
-3. O resultado e arredondado para 2 casas decimais.
-4. O xUnit executa o metodo de teste uma vez para cada [InlineData].
-5. Cada execucao compara valor esperado e valor calculado com Assert.Equal.
+3. O resultado é arredondado para 2 casas decimais.
+4. O xUnit executa o método de teste uma vez para cada [InlineData].
+5. Cada execução compara valor esperado e valor calculado com `Assert.Equal`.
 
-Implementacao testada:
+Por fim, como nos testes foi feita a conferência de eficácia dessa função específica com diferentes valores, trata-se de um teste unitário. Da mesma maneira, diferentes testes poderiam cobrir a saída de dados de mais funções distintas.
 
-- [Temperatura/ConversorTemperatura.cs](Temperatura/ConversorTemperatura.cs#L7)
-
-Teste principal:
-
-- [Temperatura.Testes/TestesConversorTemperatura.cs](Temperatura.Testes/TestesConversorTemperatura.cs#L13)
-
-## Pre-requisitos
-
-- SDK .NET 9 instalado.
-- Ambiente com comando dotnet disponivel no PATH.
-
-Para conferir SDKs instalados:
-
-```bash
-dotnet --list-sdks
-dotnet --list-runtimes
-```
-
-## Passo a passo para executar testes
-
-1. Entrar na pasta do projeto de testes:
-
-```bash
-cd Temperatura.Testes
-```
-
-2. Restaurar dependencias:
-
-```bash
-dotnet restore
-```
-
-3. Executar os testes:
-
-```bash
-dotnet test
-```
-
-Resultado esperado:
-
-- Build concluido com sucesso.
-- Descoberta e execucao dos testes xUnit.
-- Todos os testes passando.
-
-## Executar testes com cobertura
-
-Para coletar cobertura de codigo com o coletor configurado:
-
-```bash
-cd Temperatura.Testes
-dotnet test --collect:"XPlat Code Coverage"
-```
-
-Os artefatos de cobertura sao gerados em uma pasta TestResults dentro do projeto de testes.
-
-## Como adicionar novos casos de teste
-
-1. Abrir [Temperatura.Testes/TestesConversorTemperatura.cs](Temperatura.Testes/TestesConversorTemperatura.cs).
-2. Adicionar uma nova linha [InlineData] no metodo de teste.
-3. Rodar novamente:
-
-```bash
-dotnet test
-```
-
-Exemplo de novo caso:
-
-```csharp
-[InlineData(50, 10)]
-```
-
-## Solucao de problemas
-
-Erro comum:
-
-- You must install or update .NET to run this application.
-
-Causa:
-
-- Incompatibilidade entre TargetFramework do projeto e runtime disponivel na maquina.
-
-Correcao aplicada neste repositorio:
-
-- Migracao de net5.0 para net9.0 em:
-- [Temperatura/Temperatura.csproj](Temperatura/Temperatura.csproj#L4)
-- [Temperatura.Testes/Temperatura.Testes.csproj](Temperatura.Testes/Temperatura.Testes.csproj#L4)
-
-## Comandos rapidos
-
-```bash
-# executar todos os testes
-cd Temperatura.Testes && dotnet test
-
-# executar com detalhes
-cd Temperatura.Testes && dotnet test -v normal
-
-# coletar cobertura
-cd Temperatura.Testes && dotnet test --collect:"XPlat Code Coverage"
-```
+## Teste 2 - Unitários com Moq
 
 https://github.com/nataly-cunha-inteli/DotNet5-Moq-xUnit-FluentAssertions
 
-1. Deu o mesmo erro de versionamento do .NET
-
 <img width="935" height="367" alt="image" src="https://github.com/user-attachments/assets/eae5e221-84fe-4e11-a3f5-a0abfe0a806b" />
 
-# DotNet5-Moq-xUnit-FluentAssertions
-
-Este repositorio demonstra como testar uma regra de negocio em .NET usando:
+Este repositório demonstra como testar uma regra de negócio em .NET usando:
 
 - xUnit para os testes automatizados
-- Moq para simular a dependencia externa
-- FluentAssertions para deixar as assercoes mais legiveis
+- Moq para simular a dependência externa
+- FluentAssertions para deixar as asserções mais legíveis
 
-O foco do exemplo e validar a classe `AnaliseCredito`, que decide o status de uma consulta de credito a partir do retorno de um servico externo.
+O foco do exemplo é validar a classe `AnaliseCredito`, que decide o status de uma consulta de crédito a partir do retorno de um serviço externo.
 
-## Visao geral
+A aplicação está dividida em dois projetos:
 
-A aplicacao esta dividida em dois projetos:
+- `ConsultaCredito`: contém a lógica de negócio e os tipos usados pela regra.
+- `ConsultaCredito.Testes`: contém os testes unitários da lógica de negócio.
 
-- `ConsultaCredito`: contem a logica de negocio e os tipos usados pela regra.
-- `ConsultaCredito.Testes`: contem os testes unitarios da logica de negocio.
-
-O teste nao acessa nenhum servico real. Em vez disso, ele usa um mock de `IServicoConsultaCredito` para controlar os cenarios e verificar se `AnaliseCredito` retorna o status correto.
-
-## Estrutura do repositorio
-
-### Projeto principal
-
-#### [ConsultaCredito/AnaliseCredito.cs](ConsultaCredito/AnaliseCredito.cs)
-Classe principal da regra de negocio. Recebe uma implementacao de `IServicoConsultaCredito` no construtor e expoe o metodo `ConsultarSituacaoCPF`.
+O teste não acessa nenhum serviço real. Em vez disso, ele usa um mock de `IServicoConsultaCredito` para controlar os cenários e verificar se `AnaliseCredito` retorna o status correto.
 
 Comportamento esperado:
 
-- Se o servico retornar `null`, o status e `ParametroEnvioInvalido`.
-- Se o servico retornar uma lista vazia, o status e `SemPendencias`.
-- Se o servico retornar uma lista com itens, o status e `Inadimplente`.
-- Se ocorrer qualquer excecao, o status e `ErroComunicacao`.
+- Se o serviço retornar `null`, o status é `ParametroEnvioInvalido`.
+- Se o serviço retornar uma lista vazia, o status é `SemPendencias`.
+- Se o serviço retornar uma lista com itens, o status é `Inadimplente`.
+- Se ocorrer qualquer exceção, o status é `ErroComunicacao`.
+
+### Detalhes dos arquivos
 
 #### [ConsultaCredito/IServicoConsultaCredito.cs](ConsultaCredito/IServicoConsultaCredito.cs)
-Interface que representa a dependencia externa usada pela regra de negocio. Ela define o metodo `ConsultarPendenciasPorCPF(string cpf)`.
+Interface que representa a dependência externa usada pela regra de negócio. Ela define o método `ConsultarPendenciasPorCPF(string cpf)`.
 
 #### [ConsultaCredito/OutrasEstruturas.cs](ConsultaCredito/OutrasEstruturas.cs)
-Contem os tipos de apoio do dominio:
+Contém os tipos de apoio do domínio:
 
-- `StatusConsultaCredito`: enum com os possiveis retornos da analise.
-- `Pendencia`: classe com os dados de uma pendencia financeira.
-
-#### [ConsultaCredito/ConsultaCredito.csproj](ConsultaCredito/ConsultaCredito.csproj)
-Arquivo de projeto da biblioteca principal. No estado atual, o alvo configurado esta em `net9.0` para ser compativel com o runtime disponivel no ambiente.
-
-### Projeto de testes
+- `StatusConsultaCredito`: enum com os possíveis retornos da análise.
+- `Pendencia`: classe com os dados de uma pendência financeira.
 
 #### [ConsultaCredito.Testes/TestesAnaliseCredito.cs](ConsultaCredito.Testes/TestesAnaliseCredito.cs)
 Arquivo com a classe de testes `TestesAnaliseCredito`.
 
-Ele cria um `Mock<IServicoConsultaCredito>` e configura quatro cenarios:
+Ele cria um `Mock<IServicoConsultaCredito>` e configura quatro cenários:
 
-- CPF invalido: o mock retorna `null`.
-- Erro de comunicacao: o mock dispara excecao.
-- CPF sem pendencias: o mock retorna uma lista vazia.
-- CPF inadimplente: o mock retorna uma lista com uma pendencia.
+- CPF inválido: o mock retorna `null`.
+- Erro de comunicação: o mock dispara exceção.
+- CPF sem pendências: o mock retorna uma lista vazia.
+- CPF inadimplente: o mock retorna uma lista com uma pendência.
 
-Cada teste chama `AnaliseCredito.ConsultarSituacaoCPF` e verifica se o status retornado e o esperado.
+Cada teste chama `AnaliseCredito.ConsultarSituacaoCPF` e verifica se o status retornado é o esperado.
 
-#### [ConsultaCredito.Testes/ConsultaCredito.Testes.csproj](ConsultaCredito.Testes/ConsultaCredito.Testes.csproj)
-Arquivo de projeto do conjunto de testes. Inclui as dependencias:
+### Como os testes funcionam
 
-- `xunit`
-- `xunit.runner.visualstudio`
-- `Moq`
-- `FluentAssertions`
-- `Microsoft.NET.Test.Sdk`
-- `coverlet.collector`
+O objetivo dos testes é validar a regra de negócio sem depender de uma integração real.
 
-#### [ConsultaCredito.Testes/ConsultaCredito.Testes.sln](ConsultaCredito.Testes/ConsultaCredito.Testes.sln)
-Solucao usada para organizar o projeto de testes.
-
-## Como os testes funcionam
-
-O objetivo dos testes e validar a regra de negocio sem depender de uma integracao real.
-
-O fluxo e este:
+O fluxo é este:
 
 1. O teste cria um mock de `IServicoConsultaCredito`.
-2. O mock e configurado com resultados diferentes para CPFs especificos.
+2. O mock é configurado com resultados diferentes para CPFs específicos.
 3. O teste instancia `AnaliseCredito` passando o mock no construtor.
-4. O metodo `ConsultarSituacaoCPF` e executado.
-5. O resultado e comparado com o status esperado usando FluentAssertions.
+4. O método `ConsultarSituacaoCPF` é executado.
+5. O resultado é comparado com o status esperado usando FluentAssertions.
 
-Isso garante isolamento, repetibilidade e rapidez na execucao.
+Isso garante isolamento, repetibilidade e rapidez na execução.
 
-## Cenarios cobertos
+## Teste 3 - API
 
-Os quatro testes da classe `TestesAnaliseCredito` cobrem os principais caminhos da regra:
-
-- CPF invalido
-- Falha de comunicacao com o servico
-- CPF sem pendencias
-- CPF inadimplente
-
-Esses cenarios exercitam tanto o fluxo feliz quanto os retornos de erro previstos pela implementacao.
-
-## Passo a passo para executar
-
-### 1. Entrar na pasta do projeto de testes
-
-```bash
-cd ConsultaCredito.Testes
-```
-
-### 2. Restaurar dependencias
-
-O `dotnet test` ja faz a restauracao automaticamente, mas voce tambem pode executar manualmente:
-
-```bash
-dotnet restore
-```
-
-### 3. Executar os testes
-
-```bash
-dotnet test
-```
-
-### 4. Interpretar o resultado
-
-Se tudo estiver correto, voce deve ver algo parecido com:
-
-- build concluido com sucesso
-- 4 testes executados
-- 0 falhas
-
-## Resultado esperado
-
-Ao final da execucao, os testes devem confirmar que a classe `AnaliseCredito` retorna:
-
-- `ParametroEnvioInvalido` quando o servico retorna `null`
-- `ErroComunicacao` quando o servico dispara excecao
-- `SemPendencias` quando nao ha pendencias
-- `Inadimplente` quando existe ao menos uma pendencia
-
-## Observacao sobre a versao do .NET
-
-Os projetos estao configurados atualmente para `net9.0`. Isso foi necessario para rodar os testes no ambiente disponivel, que ja possui runtime .NET 9 instalado.
-
-Se voce quiser voltar a `net5.0`, sera necessario instalar o runtime correspondente na maquina de execucao.
-
-## Resumo rapido
-
-- A logica principal esta em `ConsultaCredito`.
-- Os testes estao em `ConsultaCredito.Testes`.
-- O mock com Moq permite simular respostas diferentes do servico.
-- FluentAssertions deixa as validacoes mais legiveis.
-- `dotnet test` e o comando principal para validar o projeto.
+https://github.com/nataly-cunha-inteli/ASPNETCore5-REST_API-xUnit-SpecFlow-Swagger-Docker_JurosCompostos
 
 <img width="963" height="617" alt="image" src="https://github.com/user-attachments/assets/dfeb665e-fb44-4537-a1c9-5db1917fd211" />
-
-# APIFinancas - Juros Compostos
 
 Este repositório contém uma API ASP.NET Core para cálculo de juros compostos, com testes automatizados em xUnit e SpecFlow.
 
@@ -339,60 +134,13 @@ Os cenários conferem:
 
 Os testes garantem que a função central de cálculo produza o mesmo valor esperado pelos cenários de negócio, incluindo a formatação de valores monetários com 2 casas decimais.
 
-## Como executar
+### Como os testes funcionam
 
-### 1. Restaurar as dependências
+1. O projeto de especificações executa cenários com entradas diferentes.
+2. Cada cenário informa o valor do empréstimo, o número de meses e a taxa de juros mensal.
+3. A aplicação calcula o valor final de juros compostos.
+4. O resultado é comparado com o valor esperado do cenário.
+5. Os testes validam a formatação monetária com 2 casas decimais.
 
-```bash
-dotnet restore
-```
+Isso garante que a API entregue um comportamento consistente para as regras de negócio previstas.
 
-### 2. Executar a suíte de testes
-
-Na raiz do repositório, rode:
-
-```bash
-dotnet test APIFinancas.Especificacoes/APIFinancas.Especificacoes.csproj
-```
-
-Se você já estiver dentro da pasta do projeto de especificações, também pode executar:
-
-```bash
-dotnet test
-```
-
-### 3. Executar a API
-
-Para subir a API localmente:
-
-```bash
-dotnet run --project APIFinancas/APIFinancas.csproj
-```
-
-Depois disso, a rota de cálculo pode ser acessada via endpoint HTTP `GET` em `/CalculoFinanceiro/juroscompostos`.
-
-## Mudança aplicada no cálculo
-
-Antes da correção, a função de cálculo retornava o resultado com a precisão completa do tipo `double`.
-
-Isso fazia com que valores como `12682,417945625455` fossem comparados diretamente com o resultado esperado nos testes, que já estava arredondado para moeda, como `12682,42`.
-
-O ajuste foi feito em [APIFinancas/CalculoFinanceiro.cs](APIFinancas/CalculoFinanceiro.cs) para arredondar o resultado final com `Math.Round(..., 2, MidpointRounding.AwayFromZero)`.
-
-Com isso:
-
-- o retorno da API passou a representar um valor monetário consistente
-- os testes SpecFlow deixaram de falhar por diferença de precisão decimal
-- os cenários passaram a validar exatamente o comportamento esperado pelo domínio
-
-## Resultado da validação
-
-Após a correção, a suíte em [APIFinancas.Especificacoes](APIFinancas.Especificacoes) foi executada com sucesso:
-
-- 7 testes executados
-- 7 aprovados
-- 0 falhas
-
-## Observações
-
-O projeto principal e o projeto de testes estão atualmente em `net9.0`. A limpeza das dependências de autenticação também removeu o aviso de vulnerabilidade que aparecia no pacote `Microsoft.AspNetCore.Authentication.JwtBearer` 5.0.0.
