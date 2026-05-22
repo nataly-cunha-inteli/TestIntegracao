@@ -163,3 +163,159 @@ cd Temperatura.Testes && dotnet test -v normal
 # coletar cobertura
 cd Temperatura.Testes && dotnet test --collect:"XPlat Code Coverage"
 ```
+
+1. Deu o mesmo erro de versionamento do .NET
+
+<img width="935" height="367" alt="image" src="https://github.com/user-attachments/assets/eae5e221-84fe-4e11-a3f5-a0abfe0a806b" />
+
+# DotNet5-Moq-xUnit-FluentAssertions
+
+Este repositorio demonstra como testar uma regra de negocio em .NET usando:
+
+- xUnit para os testes automatizados
+- Moq para simular a dependencia externa
+- FluentAssertions para deixar as assercoes mais legiveis
+
+O foco do exemplo e validar a classe `AnaliseCredito`, que decide o status de uma consulta de credito a partir do retorno de um servico externo.
+
+## Visao geral
+
+A aplicacao esta dividida em dois projetos:
+
+- `ConsultaCredito`: contem a logica de negocio e os tipos usados pela regra.
+- `ConsultaCredito.Testes`: contem os testes unitarios da logica de negocio.
+
+O teste nao acessa nenhum servico real. Em vez disso, ele usa um mock de `IServicoConsultaCredito` para controlar os cenarios e verificar se `AnaliseCredito` retorna o status correto.
+
+## Estrutura do repositorio
+
+### Projeto principal
+
+#### [ConsultaCredito/AnaliseCredito.cs](ConsultaCredito/AnaliseCredito.cs)
+Classe principal da regra de negocio. Recebe uma implementacao de `IServicoConsultaCredito` no construtor e expoe o metodo `ConsultarSituacaoCPF`.
+
+Comportamento esperado:
+
+- Se o servico retornar `null`, o status e `ParametroEnvioInvalido`.
+- Se o servico retornar uma lista vazia, o status e `SemPendencias`.
+- Se o servico retornar uma lista com itens, o status e `Inadimplente`.
+- Se ocorrer qualquer excecao, o status e `ErroComunicacao`.
+
+#### [ConsultaCredito/IServicoConsultaCredito.cs](ConsultaCredito/IServicoConsultaCredito.cs)
+Interface que representa a dependencia externa usada pela regra de negocio. Ela define o metodo `ConsultarPendenciasPorCPF(string cpf)`.
+
+#### [ConsultaCredito/OutrasEstruturas.cs](ConsultaCredito/OutrasEstruturas.cs)
+Contem os tipos de apoio do dominio:
+
+- `StatusConsultaCredito`: enum com os possiveis retornos da analise.
+- `Pendencia`: classe com os dados de uma pendencia financeira.
+
+#### [ConsultaCredito/ConsultaCredito.csproj](ConsultaCredito/ConsultaCredito.csproj)
+Arquivo de projeto da biblioteca principal. No estado atual, o alvo configurado esta em `net9.0` para ser compativel com o runtime disponivel no ambiente.
+
+### Projeto de testes
+
+#### [ConsultaCredito.Testes/TestesAnaliseCredito.cs](ConsultaCredito.Testes/TestesAnaliseCredito.cs)
+Arquivo com a classe de testes `TestesAnaliseCredito`.
+
+Ele cria um `Mock<IServicoConsultaCredito>` e configura quatro cenarios:
+
+- CPF invalido: o mock retorna `null`.
+- Erro de comunicacao: o mock dispara excecao.
+- CPF sem pendencias: o mock retorna uma lista vazia.
+- CPF inadimplente: o mock retorna uma lista com uma pendencia.
+
+Cada teste chama `AnaliseCredito.ConsultarSituacaoCPF` e verifica se o status retornado e o esperado.
+
+#### [ConsultaCredito.Testes/ConsultaCredito.Testes.csproj](ConsultaCredito.Testes/ConsultaCredito.Testes.csproj)
+Arquivo de projeto do conjunto de testes. Inclui as dependencias:
+
+- `xunit`
+- `xunit.runner.visualstudio`
+- `Moq`
+- `FluentAssertions`
+- `Microsoft.NET.Test.Sdk`
+- `coverlet.collector`
+
+#### [ConsultaCredito.Testes/ConsultaCredito.Testes.sln](ConsultaCredito.Testes/ConsultaCredito.Testes.sln)
+Solucao usada para organizar o projeto de testes.
+
+## Como os testes funcionam
+
+O objetivo dos testes e validar a regra de negocio sem depender de uma integracao real.
+
+O fluxo e este:
+
+1. O teste cria um mock de `IServicoConsultaCredito`.
+2. O mock e configurado com resultados diferentes para CPFs especificos.
+3. O teste instancia `AnaliseCredito` passando o mock no construtor.
+4. O metodo `ConsultarSituacaoCPF` e executado.
+5. O resultado e comparado com o status esperado usando FluentAssertions.
+
+Isso garante isolamento, repetibilidade e rapidez na execucao.
+
+## Cenarios cobertos
+
+Os quatro testes da classe `TestesAnaliseCredito` cobrem os principais caminhos da regra:
+
+- CPF invalido
+- Falha de comunicacao com o servico
+- CPF sem pendencias
+- CPF inadimplente
+
+Esses cenarios exercitam tanto o fluxo feliz quanto os retornos de erro previstos pela implementacao.
+
+## Passo a passo para executar
+
+### 1. Entrar na pasta do projeto de testes
+
+```bash
+cd ConsultaCredito.Testes
+```
+
+### 2. Restaurar dependencias
+
+O `dotnet test` ja faz a restauracao automaticamente, mas voce tambem pode executar manualmente:
+
+```bash
+dotnet restore
+```
+
+### 3. Executar os testes
+
+```bash
+dotnet test
+```
+
+### 4. Interpretar o resultado
+
+Se tudo estiver correto, voce deve ver algo parecido com:
+
+- build concluido com sucesso
+- 4 testes executados
+- 0 falhas
+
+## Resultado esperado
+
+Ao final da execucao, os testes devem confirmar que a classe `AnaliseCredito` retorna:
+
+- `ParametroEnvioInvalido` quando o servico retorna `null`
+- `ErroComunicacao` quando o servico dispara excecao
+- `SemPendencias` quando nao ha pendencias
+- `Inadimplente` quando existe ao menos uma pendencia
+
+## Observacao sobre a versao do .NET
+
+Os projetos estao configurados atualmente para `net9.0`. Isso foi necessario para rodar os testes no ambiente disponivel, que ja possui runtime .NET 9 instalado.
+
+Se voce quiser voltar a `net5.0`, sera necessario instalar o runtime correspondente na maquina de execucao.
+
+## Resumo rapido
+
+- A logica principal esta em `ConsultaCredito`.
+- Os testes estao em `ConsultaCredito.Testes`.
+- O mock com Moq permite simular respostas diferentes do servico.
+- FluentAssertions deixa as validacoes mais legiveis.
+- `dotnet test` e o comando principal para validar o projeto.
+
+
